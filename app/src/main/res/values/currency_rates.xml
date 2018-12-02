@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- from https://www.oanda.com/ -->
+    <string-array name="EUR">
+        <item name="EUR">0</item>
+        <item name="SEK">10.2671</item>
+        <item name="USD">1.14172</item>
+        <item name="GBP">0.08642</item>
+        <item name="CNY">7.91939</item>
+        <item name="JPY">128.76</item>
+        <item name="KRW">1277.97</item>
+    </string-array>
+    <string-array name="SEK">
+        <item name="EUR">0.09716</item>
+        <item name="SEK">0</item>
+        <item name="USD">0.11094</item>
+        <item name="GBP">0.8642</item>
+        <item name="CNY">0.76952</item>
+        <item name="JPY">12.51</item>
+        <item name="KRW">124.179</item>
+    </string-array>
+    <string-array name="USD">
+        <item name="EUR">0.87569</item>
+        <item name="SEK">8.99051</item>
+        <item name="USD">0</item>
+        <item name="GBP">0.77895</item>
+        <item name="CNY">6.9364</item>
+        <item name="JPY">112.77</item>
+        <item name="KRW">1119.34</item>
+    </string-array>
+    <string-array name="GBP">
+        <item name="EUR">1.12292</item>
+        <item name="SEK">11.529</item>
+        <item name="USD">1.28235</item>
+        <item name="GBP">0</item>
+        <item name="CNY">8.89489</item>
+        <item name="JPY">144.65</item>
+        <item name="KRW">1435.38</item>
+    </string-array>
+    <string-array name="CNY">
+        <item name="EUR">0.1262</item>
+        <item name="SEK">1.29569</item>
+        <item name="USD">0.14412</item>
+        <item name="GBP">0.11226</item>
+        <item name="CNY">0</item>
+        <item name="JPY">16.25</item>
+        <item name="KRW">161.316</item>
+    </string-array>
+    <string-array name="JPY">
+        <item name="EUR">0.00776</item>
+        <item name="SEK">0.07966</item>
+        <item name="USD">0.00886</item>
+        <item name="GBP">0.0069</item>
+        <item name="CNY">0.06146</item>
+        <item name="JPY">0</item>
+        <item name="KRW">9.91799</item>
+    </string-array>
+    <string-array name="KRW">
+        <item name="EUR">0.00078</item>
+        <item name="SEK">0.00801</item>
+        <item name="USD">0.00089</item>
+        <item name="GBP">0.00069</item>
+        <item name="CNY">0.00618</item>
+        <item name="JPY">0.1</item>
+        <item name="KRW">0</item>
+    </string-array>
+
+</resources>

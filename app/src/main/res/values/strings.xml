@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">DVA232CurrencyConverter2</string>
+
+    <string name="hint_input_value">0.00</string>
+    <string name="dialog_conversion_rates_from">from</string>
+    <string name="dialog_conversion_rates_to">to</string>
+    <string name="more">more</string>
+
+    <string-array name="currencies_array">
+        <item>EUR ( &#8364; )</item>
+        <item>SEK ( kr )</item>
+        <item>USD ( &#36; )</item>
+        <item>GBP ( &#163; )</item>
+        <item>CNY ( &#20803; )</item>
+        <item>JPY ( &#165; )</item>
+        <item>KRW ( &#8361; )</item>
+    </string-array>
+
+    <string name="menu_conversion_rates">Conversion rates</string>
+    <string name="menu_about">About</string>
+    <string name="menu_about_content">
+        <b>Developer:</b>\n
+                <li>Sylvio Ujvari</li>\n
+                <li>Mohamed Taarbiindhe</li>
+        \n\n
+        <a href="https://github.com/xenobius4slash/dva232_currency_converter_1">GitHub</a>
+    </string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+</resources>
