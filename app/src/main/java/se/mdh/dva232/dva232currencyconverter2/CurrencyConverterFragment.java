@@ -1,26 +1,42 @@
 package se.mdh.dva232.dva232currencyconverter2;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.telephony.TelephonyManager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.JsonReader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
+import java.util.Locale;
+
+import javax.net.ssl.HttpsURLConnection;
 
 
-public class CurrencyConverterFragment extends Fragment {
+public class CurrencyConverterFragment extends Fragment{
 
     public Integer integerCurrency1 = null;
     public Integer integerCurrency2 = null;
@@ -49,6 +65,8 @@ public class CurrencyConverterFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.d("FRAGMENT 0", "onCreateView(...)");
         // Inflate the layout for this fragment
+        Log.d("COUNTRY","country: " + getUserCountry(getContext()) );
+
         final View rootView = inflater.inflate(R.layout.fragment_currency_converter, container, false);
 
         /*
@@ -56,7 +74,7 @@ public class CurrencyConverterFragment extends Fragment {
          */
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(), R.array.currencies_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
+        
         /*
          * top spinner
          */
@@ -119,6 +137,18 @@ public class CurrencyConverterFragment extends Fragment {
          */
         TextView textView = rootView.findViewById(R.id.result);
         textView.setText(R.string.hint_input_value);
+
+        /*
+         * update button
+         */
+        Button updateButton = rootView.findViewById(R.id.update_button);
+        updateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("BUTTON", "onClick()");
+                updateCurrencyRates(rootView);
+            }
+        });
 
         return rootView;
     }
@@ -194,8 +224,8 @@ public class CurrencyConverterFragment extends Fragment {
      * @param d     Double for round (#.##)
      * @return      Double
      */
-    double roundTwoDecimals(double d)
-    {
+    double roundTwoDecimals(double d) {
+
         DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols();
         otherSymbols.setDecimalSeparator('.');
         DecimalFormat twoDForm = new DecimalFormat("#.##", otherSymbols);
@@ -222,7 +252,12 @@ public class CurrencyConverterFragment extends Fragment {
             } else {
                 result = roundTwoDecimals((from * currencyRate));
             }
-            resultText = String.valueOf(result);
+            //resultText = String.valueOf(result);
+            NumberFormat format = NumberFormat.getCurrencyInstance();
+            DecimalFormatSymbols dfs = ((DecimalFormat) format).getDecimalFormatSymbols();
+            dfs.setCurrencySymbol("");
+            ((DecimalFormat) format).setDecimalFormatSymbols(dfs);
+            resultText = format.format(result);
         } else {
             resultText = "";
         }
@@ -241,4 +276,98 @@ public class CurrencyConverterFragment extends Fragment {
         textView.setText( getTextForEditText(input) );
     }
 
+    public void updateCurrencyRates(final View view) {
+        Log.d("UPDATECURR", "updateCurrencyRates()");
+
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                if( isConnected() ){
+                    try {
+                        URL updateUrl = new URL("http://data.fixer.io/api/latest?access_key=fb6981cfe26b466276af83e03afeee15&symbols=EUR,SEK,USD,GBP,CNY,JPY,KRW");
+                        try {
+                            String tempString = null;
+                            Double tempDouble;
+                            Boolean success;
+                            Integer timestamp;
+                            String base = null;
+                            String date = null;
+                            Double currencyRates[] = new Double[7];
+                            HttpURLConnection con = (HttpURLConnection) updateUrl.openConnection();
+                            InputStream responseBody = con.getInputStream();
+                            InputStreamReader responseBodyReader = new InputStreamReader(responseBody, "UTF-8");
+                            JsonReader json = new JsonReader(responseBodyReader);
+                            json.beginObject();
+                            json.nextName(); success = json.nextBoolean();
+                            Log.d("JSON", "key: success -> value: " + success );
+                            tempString = json.nextName();
+                            Log.d("JSON", "key: " + tempString );
+                            if(tempString == "error"){
+                                Log.d("JSON", "ERROR" + json.nextInt());
+                            } else {
+                                timestamp = json.nextInt();
+                                Log.d("JSON", "key: timestamp -> value: " + timestamp );
+                                json.nextName(); base = json.nextString();  // base
+                                Log.d("JSON", "key: base -> value: " + base );
+                                json.nextName(); date = json.nextString();  // date
+                                Log.d("JSON", "key: date -> value: " + date );
+                                tempString = json.nextName(); json.beginObject(); // rates
+                                // new JSON object with the rates
+                                tempString = json.nextName(); // EUR
+                                currencyRates[0] = json.nextDouble();
+                                Log.d("JSON", "key: " + tempString + " -> value: " + currencyRates[0] );
+                                tempString = json.nextName(); // SEK
+                                currencyRates[1] = json.nextDouble();
+                                Log.d("JSON", "key: " + tempString + " -> value: " + currencyRates[1] );
+                                tempString = json.nextName(); // USD
+                                currencyRates[2] = json.nextDouble();
+                                Log.d("JSON", "key: " + tempString + " -> value: " + currencyRates[2] );
+                                tempString = json.nextName(); // GBP
+                                currencyRates[3] = json.nextDouble();
+                                Log.d("JSON", "key: " + tempString + " -> value: " + currencyRates[3] );
+                                tempString = json.nextName(); // CNY
+                                currencyRates[4] = json.nextDouble();
+                                Log.d("JSON", "key: " + tempString + " -> value: " + currencyRates[4] );
+                                tempString = json.nextName(); // JPY
+                                currencyRates[5] = json.nextDouble();
+                                Log.d("JSON", "key: " + tempString + " -> value: " + currencyRates[5] );
+                                tempString = json.nextName(); // KRW
+                                currencyRates[6] = json.nextDouble();
+                                Log.d("JSON", "key: " + tempString + " -> value: " + currencyRates[6] );
+                            }
+                        }catch(Exception ex){
+                            Log.e("CON", ex.getMessage());
+                        }
+                    }
+                    catch (MalformedURLException ex){
+                        Log.e("URL", ex.getMessage());
+                        //Toast.makeText(this, ex.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                } else {
+                    Log.d("CON", "no connection detected");
+                    //Toast.makeText(getContext(), "no connection detected", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+    }
+
+    public Boolean isConnected() {
+        boolean connected = false;
+        try {
+            ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo nInfo = cm.getActiveNetworkInfo();
+            connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
+            return connected;
+        } catch (Exception e) {
+            Log.e("Connectivity Exception", e.getMessage());
+        }
+        return connected;
+    }
+
+    public static String getUserCountry(Context context) {
+        TelephonyManager tm = (TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE);
+        String countryCodeValue = tm.getNetworkCountryIso();
+        return countryCodeValue;
+    }
 }
