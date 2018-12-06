@@ -3,7 +3,6 @@ package se.mdh.dva232.dva232currencyconverter2;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -21,8 +20,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -31,9 +28,6 @@ import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
-import java.util.Locale;
-
-import javax.net.ssl.HttpsURLConnection;
 
 
 public class CurrencyConverterFragment extends Fragment{
@@ -141,6 +135,7 @@ public class CurrencyConverterFragment extends Fragment{
         /*
          * update button
          */
+        /*
         Button updateButton = rootView.findViewById(R.id.update_button);
         updateButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -149,7 +144,7 @@ public class CurrencyConverterFragment extends Fragment{
                 updateCurrencyRates(rootView);
             }
         });
-
+*/
         return rootView;
     }
 
@@ -276,6 +271,7 @@ public class CurrencyConverterFragment extends Fragment{
         textView.setText( getTextForEditText(input) );
     }
 
+    /*
     public void updateCurrencyRates(final View view) {
         Log.d("UPDATECURR", "updateCurrencyRates()");
 
@@ -364,10 +360,10 @@ public class CurrencyConverterFragment extends Fragment{
         }
         return connected;
     }
-
+*/
     public static String getUserCountry(Context context) {
         TelephonyManager tm = (TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE);
-        String countryCodeValue = tm.getNetworkCountryIso();
-        return countryCodeValue;
+        return tm.getNetworkCountryIso();
     }
+
 }
