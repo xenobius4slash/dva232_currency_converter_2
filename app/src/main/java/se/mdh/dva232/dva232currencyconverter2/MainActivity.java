@@ -38,7 +38,7 @@ public class MainActivity extends FragmentActivity {
 
     private XmlSerializer xmlSerializer = Xml.newSerializer();
     //private Double currencyRates[] = new Double[7];
-    private Double currencyRates[] = {0.0, 10.2671, 1.14172, 0.08642, 7.91939, 128.76, 1277.97};    // EUR, SEK, USD, GBP, CNY, JPY, KRW
+    private Double currencyRates[] = {1.0, 10.2671, 1.14172, 0.88919, 7.91939, 128.76, 1277.97};    // EUR, SEK, USD, GBP, CNY, JPY, KRW
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -214,73 +214,72 @@ public class MainActivity extends FragmentActivity {
 
         createFromStartNode("EUR");
         createToNode("EUR", "0");                         // 0.0
-        createToNode("SEK", String.valueOf(currencyRates[1]));  // 10.2671
-        createToNode("USD", String.valueOf(currencyRates[2]));  // 1.14172
-        createToNode("GBP", String.valueOf(currencyRates[3]));  // 0.08642
-        createToNode("CNY", String.valueOf(currencyRates[4]));  // 7.91939
-        createToNode("JPY", String.valueOf(currencyRates[5]));  // 128.76
-        createToNode("KRW", String.valueOf(currencyRates[6]));  // 1277.97
+        createToNode("SEK", String.format("%.5f", currencyRates[1]));  // 10.2671
+        createToNode("USD", String.format("%.5f", currencyRates[2]));  // 1.14172
+        createToNode("GBP", String.format("%.5f", currencyRates[3]));  // 0.08642
+        createToNode("CNY", String.format("%.5f", currencyRates[4]));  // 7.91939
+        createToNode("JPY", String.format("%.5f", currencyRates[5]));  // 128.76
+        createToNode("KRW", String.format("%.5f", currencyRates[6]));  // 1277.97
         createFomEndNode();
 
-
         createFromStartNode("SEK");
-        createToNode("EUR", String.valueOf( 1.0 / currencyRates[1] ));
-        createToNode("SEK", "0");
-        createToNode("USD", String.valueOf( (1.0 / currencyRates[1]) * currencyRates[2] ));  // 0.11094
-        createToNode("GBP", String.valueOf( (1.0 / currencyRates[1]) * currencyRates[3] ));  // 0.8642  TODO
-        createToNode("CNY", String.valueOf( (1.0 / currencyRates[1]) * currencyRates[4] ));  // 0.76952
-        createToNode("JPY", String.valueOf( (1.0 / currencyRates[1]) * currencyRates[5] ));  // 12.51
-        createToNode("KRW", String.valueOf( (1.0 / currencyRates[1]) * currencyRates[6] ));  // 124.179
+        createToNode("EUR", String.format("%.5f", (1.0 / currencyRates[1]) * currencyRates[0] ));
+        createToNode("SEK", String.format("%.5f", (1.0 / currencyRates[1]) * currencyRates[1] ));
+        createToNode("USD", String.format("%.5f", (1.0 / currencyRates[1]) * currencyRates[2] ));  // 0.11094
+        createToNode("GBP", String.format("%.5f", (1.0 / currencyRates[1]) * currencyRates[3] ));  // 0.8642
+        createToNode("CNY", String.format("%.5f", (1.0 / currencyRates[1]) * currencyRates[4] ));  // 0.76952
+        createToNode("JPY", String.format("%.5f", (1.0 / currencyRates[1]) * currencyRates[5] ));  // 12.51
+        createToNode("KRW", String.format("%.5f", (1.0 / currencyRates[1]) * currencyRates[6] ));  // 124.179
         createFomEndNode();
 
         createFromStartNode("USD");
-        createToNode("EUR", String.valueOf( (1.0 / currencyRates[2]) * currencyRates[0] )); // TODO
-        createToNode("SEK", String.valueOf( (1.0 / currencyRates[2]) * currencyRates[1] ));
-        createToNode("USD", "0");
-        createToNode("GBP", String.valueOf( (1.0 / currencyRates[2]) * currencyRates[3] ));
-        createToNode("CNY", String.valueOf( (1.0 / currencyRates[2]) * currencyRates[4] ));
-        createToNode("JPY", String.valueOf( (1.0 / currencyRates[2]) * currencyRates[5] ));
-        createToNode("KRW", String.valueOf( (1.0 / currencyRates[2]) * currencyRates[6] ));
+        createToNode("EUR", String.format("%.5f", (1.0 / currencyRates[2]) * currencyRates[0] ));
+        createToNode("SEK", String.format("%.5f", (1.0 / currencyRates[2]) * currencyRates[1] ));
+        createToNode("USD", String.format("%.5f", (1.0 / currencyRates[2]) * currencyRates[2] ));
+        createToNode("GBP", String.format("%.5f", (1.0 / currencyRates[2]) * currencyRates[3] ));
+        createToNode("CNY", String.format("%.5f", (1.0 / currencyRates[2]) * currencyRates[4] ));
+        createToNode("JPY", String.format("%.5f", (1.0 / currencyRates[2]) * currencyRates[5] ));
+        createToNode("KRW", String.format("%.5f", (1.0 / currencyRates[2]) * currencyRates[6] ));
         createFomEndNode();
 
         createFromStartNode("GBP");
-        createToNode("EUR", String.valueOf( (1.0 / currencyRates[3]) * currencyRates[0] )); // TODO
-        createToNode("SEK", String.valueOf( (1.0 / currencyRates[3]) * currencyRates[1] ));
-        createToNode("USD", String.valueOf( (1.0 / currencyRates[3]) * currencyRates[2] ));
-        createToNode("GBP", "0");
-        createToNode("CNY", String.valueOf( (1.0 / currencyRates[3]) * currencyRates[4] ));
-        createToNode("JPY", String.valueOf( (1.0 / currencyRates[3]) * currencyRates[5] ));
-        createToNode("KRW", String.valueOf( (1.0 / currencyRates[3]) * currencyRates[6] ));
+        createToNode("EUR", String.format("%.5f", (1.0 / currencyRates[3]) * currencyRates[0] ));
+        createToNode("SEK", String.format("%.5f", (1.0 / currencyRates[3]) * currencyRates[1] ));
+        createToNode("USD", String.format("%.5f", (1.0 / currencyRates[3]) * currencyRates[2] ));
+        createToNode("GBP", String.format("%.5f", (1.0 / currencyRates[3]) * currencyRates[3] ));
+        createToNode("CNY", String.format("%.5f", (1.0 / currencyRates[3]) * currencyRates[4] ));
+        createToNode("JPY", String.format("%.5f", (1.0 / currencyRates[3]) * currencyRates[5] ));
+        createToNode("KRW", String.format("%.5f", (1.0 / currencyRates[3]) * currencyRates[6] ));
         createFomEndNode();
 
         createFromStartNode("CNY");
-        createToNode("EUR", String.valueOf( (1.0 / currencyRates[4]) * currencyRates[0] ));
-        createToNode("SEK", String.valueOf( (1.0 / currencyRates[4]) * currencyRates[1] ));
-        createToNode("USD", String.valueOf( (1.0 / currencyRates[4]) * currencyRates[2] ));
-        createToNode("GBP", String.valueOf( (1.0 / currencyRates[4]) * currencyRates[3] ));
-        createToNode("CNY", "0");
-        createToNode("JPY", String.valueOf( (1.0 / currencyRates[4]) * currencyRates[5] ));
-        createToNode("KRW", String.valueOf( (1.0 / currencyRates[4]) * currencyRates[6] ));
+        createToNode("EUR", String.format("%.5f", (1.0 / currencyRates[4]) * currencyRates[0] ));
+        createToNode("SEK", String.format("%.5f", (1.0 / currencyRates[4]) * currencyRates[1] ));
+        createToNode("USD", String.format("%.5f", (1.0 / currencyRates[4]) * currencyRates[2] ));
+        createToNode("GBP", String.format("%.5f", (1.0 / currencyRates[4]) * currencyRates[3] ));
+        createToNode("CNY", String.format("%.5f", (1.0 / currencyRates[4]) * currencyRates[4] ));
+        createToNode("JPY", String.format("%.5f", (1.0 / currencyRates[4]) * currencyRates[5] ));
+        createToNode("KRW", String.format("%.5f", (1.0 / currencyRates[4]) * currencyRates[6] ));
         createFomEndNode();
 
         createFromStartNode("JPY");
-        createToNode("EUR", String.valueOf( (1.0 / currencyRates[5]) * currencyRates[0] ));
-        createToNode("SEK", String.valueOf( (1.0 / currencyRates[5]) * currencyRates[1] ));
-        createToNode("USD", String.valueOf( (1.0 / currencyRates[5]) * currencyRates[2] ));
-        createToNode("GBP", String.valueOf( (1.0 / currencyRates[5]) * currencyRates[3] ));
-        createToNode("CNY", String.valueOf( (1.0 / currencyRates[5]) * currencyRates[4] ));
-        createToNode("JPY", "0");
-        createToNode("KRW", String.valueOf( (1.0 / currencyRates[5]) * currencyRates[6] ));
+        createToNode("EUR", String.format("%.5f", (1.0 / currencyRates[5]) * currencyRates[0] ));
+        createToNode("SEK", String.format("%.5f", (1.0 / currencyRates[5]) * currencyRates[1] ));
+        createToNode("USD", String.format("%.5f", (1.0 / currencyRates[5]) * currencyRates[2] ));
+        createToNode("GBP", String.format("%.5f", (1.0 / currencyRates[5]) * currencyRates[3] ));
+        createToNode("CNY", String.format("%.5f", (1.0 / currencyRates[5]) * currencyRates[4] ));
+        createToNode("JPY", String.format("%.5f", (1.0 / currencyRates[5]) * currencyRates[5] ));
+        createToNode("KRW", String.format("%.5f", (1.0 / currencyRates[5]) * currencyRates[6] ));
         createFomEndNode();
 
         createFromStartNode("KRW");
-        createToNode("EUR", String.valueOf( (1.0 / currencyRates[6]) * currencyRates[0] ));
-        createToNode("SEK", String.valueOf( (1.0 / currencyRates[6]) * currencyRates[1] ));
-        createToNode("USD", String.valueOf( (1.0 / currencyRates[6]) * currencyRates[2] ));
-        createToNode("GBP", String.valueOf( (1.0 / currencyRates[6]) * currencyRates[3] ));
-        createToNode("CNY", String.valueOf( (1.0 / currencyRates[6]) * currencyRates[4] ));
-        createToNode("JPY", String.valueOf( (1.0 / currencyRates[6]) * currencyRates[5] ));
-        createToNode("KRW", "0");
+        createToNode("EUR", String.format("%.5f", (1.0 / currencyRates[6]) * currencyRates[0] ));
+        createToNode("SEK", String.format("%.5f", (1.0 / currencyRates[6]) * currencyRates[1] ));
+        createToNode("USD", String.format("%.5f", (1.0 / currencyRates[6]) * currencyRates[2] ));
+        createToNode("GBP", String.format("%.5f", (1.0 / currencyRates[6]) * currencyRates[3] ));
+        createToNode("CNY", String.format("%.5f", (1.0 / currencyRates[6]) * currencyRates[4] ));
+        createToNode("JPY", String.format("%.5f", (1.0 / currencyRates[6]) * currencyRates[5] ));
+        createToNode("KRW", String.format("%.5f", (1.0 / currencyRates[6]) * currencyRates[6] ));
         createFomEndNode();
 
         xmlSerializer.endDocument();
