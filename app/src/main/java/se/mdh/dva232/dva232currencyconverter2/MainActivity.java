@@ -1,5 +1,6 @@
 package se.mdh.dva232.dva232currencyconverter2;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -15,6 +16,11 @@ import android.text.format.DateFormat;
 import android.util.JsonReader;
 import android.util.Log;
 import android.util.Xml;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Spinner;
+import android.widget.TextView;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
@@ -33,6 +39,7 @@ import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Calendar;
+import java.util.zip.Inflater;
 
 
 public class MainActivity extends FragmentActivity {
@@ -102,6 +109,7 @@ public class MainActivity extends FragmentActivity {
 
         updateCurrencyRatesAutomatically();
         checkForNetworkConnection();
+
     }
 
     @Override
@@ -167,6 +175,16 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
+    public void setLatestUpdateTextView(Long timestamp) {
+        Calendar lastUpdated = Calendar.getInstance();
+        lastUpdated.setTimeInMillis(timestamp * 1000);
+        Log.d("LASTUPDATED", "new last updated: " + DateFormat.format("dd-MM-yyyy HH:mm:ss", lastUpdated).toString());
+
+        TextView tv = findViewById(R.id.latestUpdate);
+        tv.setText( DateFormat.format("dd.MM.yyyy HH:mm", lastUpdated).toString() );
+
+    }
+
     /**
      * Check for internet connection
      * @return  Boolean     true => yes, false => no
@@ -203,6 +221,7 @@ public class MainActivity extends FragmentActivity {
                 currencyRatesAll[0][6] = 1277.97;
                 calculateMissingCurrencyRates();
                 getGeneratedXmlContent(lastUpdatedTimestamp);
+                setLatestUpdateTextView(lastUpdatedTimestamp);
             }
         });
         Log.d("ASYNC", "end async process");
@@ -295,8 +314,8 @@ public class MainActivity extends FragmentActivity {
                         if (tempString == "error") {
                             Log.d("JSON", "ERROR" + json.nextInt());
                         } else {
-                            timestamp = json.nextInt();
-                            Log.d("JSON", "key: timestamp -> value: " + timestamp);
+                            lastUpdatedTimestamp = (long) json.nextInt();
+                            Log.d("JSON", "key: timestamp -> value: " + lastUpdatedTimestamp);
                             json.nextName();
                             base = json.nextString();  // base
                             Log.d("JSON", "key: base -> value: " + base);
@@ -330,10 +349,11 @@ public class MainActivity extends FragmentActivity {
 
                             calculateMissingCurrencyRates();
                             Log.d("UPDATE","currency rates calculated and saved");
-                            String xmlContent = getGeneratedXmlContent((long) timestamp);
+                            String xmlContent = getGeneratedXmlContent(lastUpdatedTimestamp);
                             Log.d("UPDATE","XML document content created");
                             saveXmlFile(xmlContent);
                             Log.d("UPDATE","XML file saved");
+                            setLatestUpdateTextView(lastUpdatedTimestamp);
                             networkConnection = true;
                         }
                     } catch (Exception ex) {
@@ -547,6 +567,7 @@ public class MainActivity extends FragmentActivity {
             xmlParser.nextTag();
             xmlParser.nextTag();    // timestamp
             lastUpdatedTimestamp = Long.parseLong(xmlParser.nextText());
+            setLatestUpdateTextView(lastUpdatedTimestamp);
 
             int row = 0;
             int col = 0;
