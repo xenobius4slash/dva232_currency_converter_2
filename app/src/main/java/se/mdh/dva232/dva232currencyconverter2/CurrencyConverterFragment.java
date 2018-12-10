@@ -1,5 +1,6 @@
 package se.mdh.dva232.dva232currencyconverter2;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -35,7 +36,6 @@ public class CurrencyConverterFragment extends Fragment{
     public Integer integerCurrency1 = null;
     public Integer integerCurrency2 = null;
     public Boolean savedInstance = false;
-    public String SAVED_ET1;
 
     public CurrencyConverterFragment() {
         // Required empty public constructor
@@ -56,11 +56,10 @@ public class CurrencyConverterFragment extends Fragment{
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, final Bundle savedInstanceState) {
         Log.d("FRAGMENT 0", "onCreateView(...)");
         // Inflate the layout for this fragment
         Log.d("COUNTRY","country: " + getUserCountry(getContext()) );
-
         final View rootView = inflater.inflate(R.layout.fragment_currency_converter, container, false);
 
         /*
@@ -74,7 +73,7 @@ public class CurrencyConverterFragment extends Fragment{
          */
         Spinner spinner1 = rootView.findViewById(R.id.currencies_spinner1);
         spinner1.setAdapter(adapter);
-        spinner1.setSelection(0);   // init value
+        spinner1.setSelection( getSpinnerPositionByUserCountry( getUserCountry(getContext()) ) );   // init value
         spinner1.setOnItemSelectedListener(
                 new AdapterView.OnItemSelectedListener() {
                     @Override
@@ -91,13 +90,10 @@ public class CurrencyConverterFragment extends Fragment{
          * top editText
          */
         final EditText editText1 = rootView.findViewById(R.id.input_value);
-        if(savedInstanceState!=null && savedInstanceState.containsKey("ET1")) {
-            Log.d("SAVE","key 'ET1' exist");
-            SAVED_ET1 = savedInstanceState.getString("ET1");
-        }
+
         editText1.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable s) {
-                if( editText1.hasFocus() && !savedInstance ) {
+                if( editText1.hasFocus() ) {
                     String resultText;
                     resultText = getTextForEditText(s.toString());
                     TextView textView = rootView.findViewById(R.id.result);
@@ -111,9 +107,14 @@ public class CurrencyConverterFragment extends Fragment{
         /*
          * bottom spinner
          */
+        Integer posSpiner2;
         Spinner spinner2 = rootView.findViewById(R.id.currencies_spinner2);
         spinner2.setAdapter(adapter);
-        spinner2.setSelection(1);   // init value
+        if( getSpinnerPositionByUserCountry( getUserCountry(getContext()) ) == 1) {
+            spinner2.setSelection(0);   // init value
+        } else {
+            spinner2.setSelection(1);   // init value
+        }
         spinner2.setOnItemSelectedListener(
                 new AdapterView.OnItemSelectedListener() {
                     @Override
@@ -132,19 +133,6 @@ public class CurrencyConverterFragment extends Fragment{
         TextView textView = rootView.findViewById(R.id.result);
         textView.setText(R.string.hint_input_value);
 
-        /*
-         * update button
-         */
-        /*
-        Button updateButton = rootView.findViewById(R.id.update_button);
-        updateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("BUTTON", "onClick()");
-                updateCurrencyRates(rootView);
-            }
-        });
-*/
         return rootView;
     }
 
@@ -186,32 +174,8 @@ public class CurrencyConverterFragment extends Fragment{
      * @return                  conversion rate
      */
     public Double getCurrencyRate(int currencyFrom, int currencyTo) {
-        String conversionRate;
-        switch( currencyFrom ) {
-            case 0: String[] currencyEUR = getResources().getStringArray(R.array.EUR);
-                conversionRate = currencyEUR[currencyTo];
-                break;
-            case 1: String[] currencySEK = getResources().getStringArray(R.array.SEK);
-                conversionRate = currencySEK[currencyTo];
-                break;
-            case 2: String[] currencyUSD = getResources().getStringArray(R.array.USD);
-                conversionRate = currencyUSD[currencyTo];
-                break;
-            case 3: String[] currencyGBP = getResources().getStringArray(R.array.GBP);
-                conversionRate = currencyGBP[currencyTo];
-                break;
-            case 4: String[] currencyCNY = getResources().getStringArray(R.array.CNY);
-                conversionRate = currencyCNY[currencyTo];
-                break;
-            case 5: String[] currencyJPY = getResources().getStringArray(R.array.JPY);
-                conversionRate = currencyJPY[currencyTo];
-                break;
-            case 6: String[] currencyKRW = getResources().getStringArray(R.array.KRW);
-                conversionRate = currencyKRW[currencyTo];
-                break;
-            default: conversionRate = "0";
-        }
-        return Double.parseDouble(conversionRate);
+        Log.d("SPINNER","getCurrencyRate("+currencyFrom+", "+currencyTo+")");
+        return ((MainActivity) getActivity()).getCurrencyRatesAll()[currencyFrom][currencyTo];
     }
 
     /**
@@ -271,99 +235,29 @@ public class CurrencyConverterFragment extends Fragment{
         textView.setText( getTextForEditText(input) );
     }
 
-    /*
-    public void updateCurrencyRates(final View view) {
-        Log.d("UPDATECURR", "updateCurrencyRates()");
-
-        AsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                if( isConnected() ){
-                    try {
-                        URL updateUrl = new URL("http://data.fixer.io/api/latest?access_key=fb6981cfe26b466276af83e03afeee15&symbols=EUR,SEK,USD,GBP,CNY,JPY,KRW");
-                        try {
-                            String tempString = null;
-                            Double tempDouble;
-                            Boolean success;
-                            Integer timestamp;
-                            String base = null;
-                            String date = null;
-                            Double currencyRates[] = new Double[7];
-                            HttpURLConnection con = (HttpURLConnection) updateUrl.openConnection();
-                            InputStream responseBody = con.getInputStream();
-                            InputStreamReader responseBodyReader = new InputStreamReader(responseBody, "UTF-8");
-                            JsonReader json = new JsonReader(responseBodyReader);
-                            json.beginObject();
-                            json.nextName(); success = json.nextBoolean();
-                            Log.d("JSON", "key: success -> value: " + success );
-                            tempString = json.nextName();
-                            Log.d("JSON", "key: " + tempString );
-                            if(tempString == "error"){
-                                Log.d("JSON", "ERROR" + json.nextInt());
-                            } else {
-                                timestamp = json.nextInt();
-                                Log.d("JSON", "key: timestamp -> value: " + timestamp );
-                                json.nextName(); base = json.nextString();  // base
-                                Log.d("JSON", "key: base -> value: " + base );
-                                json.nextName(); date = json.nextString();  // date
-                                Log.d("JSON", "key: date -> value: " + date );
-                                tempString = json.nextName(); json.beginObject(); // rates
-                                // new JSON object with the rates
-                                tempString = json.nextName(); // EUR
-                                currencyRates[0] = json.nextDouble();
-                                Log.d("JSON", "key: " + tempString + " -> value: " + currencyRates[0] );
-                                tempString = json.nextName(); // SEK
-                                currencyRates[1] = json.nextDouble();
-                                Log.d("JSON", "key: " + tempString + " -> value: " + currencyRates[1] );
-                                tempString = json.nextName(); // USD
-                                currencyRates[2] = json.nextDouble();
-                                Log.d("JSON", "key: " + tempString + " -> value: " + currencyRates[2] );
-                                tempString = json.nextName(); // GBP
-                                currencyRates[3] = json.nextDouble();
-                                Log.d("JSON", "key: " + tempString + " -> value: " + currencyRates[3] );
-                                tempString = json.nextName(); // CNY
-                                currencyRates[4] = json.nextDouble();
-                                Log.d("JSON", "key: " + tempString + " -> value: " + currencyRates[4] );
-                                tempString = json.nextName(); // JPY
-                                currencyRates[5] = json.nextDouble();
-                                Log.d("JSON", "key: " + tempString + " -> value: " + currencyRates[5] );
-                                tempString = json.nextName(); // KRW
-                                currencyRates[6] = json.nextDouble();
-                                Log.d("JSON", "key: " + tempString + " -> value: " + currencyRates[6] );
-                            }
-                        }catch(Exception ex){
-                            Log.e("CON", ex.getMessage());
-                        }
-                    }
-                    catch (MalformedURLException ex){
-                        Log.e("URL", ex.getMessage());
-                        //Toast.makeText(this, ex.getMessage(), Toast.LENGTH_LONG).show();
-                    }
-                } else {
-                    Log.d("CON", "no connection detected");
-                    //Toast.makeText(getContext(), "no connection detected", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-    }
-
-    public Boolean isConnected() {
-        boolean connected = false;
-        try {
-            ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo nInfo = cm.getActiveNetworkInfo();
-            connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
-            return connected;
-        } catch (Exception e) {
-            Log.e("Connectivity Exception", e.getMessage());
-        }
-        return connected;
-    }
-*/
     public static String getUserCountry(Context context) {
         TelephonyManager tm = (TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE);
         return tm.getNetworkCountryIso();
     }
 
+    public Integer getSpinnerPositionByUserCountry(String country) {
+        Integer pos;
+        if( country.equals("se")) {
+            pos = 1;
+        } else if( country.equals("vi") || country.equals("as") || country.equals("vg") || country.equals("ec") || country.equals("gu") || country.equals("tc") || country.equals("mh")
+                || country.equals("fm") || country.equals("mp") || country.equals("tl") || country.equals("pw") || country.equals("pr") || country.equals("us") || country.equals("um") ) {
+            pos = 2;
+        } else if( country.equals("io") || country.equals("uk") ) {
+            pos = 3;
+        } else if( country.equals("cn") ) {
+            pos = 4;
+        } else if( country.equals("jp") ) {
+            pos = 5;
+        } else if( country.equals("kr") ) {
+            pos = 6;
+        } else {
+            pos = 0;
+        }
+        return pos;
+    }
 }

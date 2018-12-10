@@ -11,7 +11,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:focusableInTouchMode="true" >
+    android:windowSoftInputMode="stateAlwaysHidden"
+    android:focusableInTouchMode="true">
 
     <Spinner
 
@@ -23,11 +24,12 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
+        android:background="@drawable/spinner"
         android:dropDownWidth="match_parent"
         android:entries="@array/currencies_array"
         android:spinnerMode="dialog"
-        android:background="@drawable/spinner"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -44,9 +46,9 @@
         android:gravity="center"
         android:hint="@string/hint_input_value"
         android:inputType="numberDecimal"
+        android:maxLength="10"
         android:selectAllOnFocus="false"
         android:singleLine="true"
-        android:maxLength="10"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -79,31 +81,15 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="163dp"
         android:layout_marginRight="163dp"
+        android:hint="@string/hint_input_value"
         android:text="@string/hint_input_value"
         android:textColor="@android:color/black"
         android:textSize="20sp"
-        android:hint="@string/hint_input_value"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/currencies_spinner2"
         tools:text="@string/hint_input_value" />
 
-    <Button
-        android:id="@+id/update_button"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="16dp"
-        android:text="TODO: update"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/result" />
 
 
     <!--

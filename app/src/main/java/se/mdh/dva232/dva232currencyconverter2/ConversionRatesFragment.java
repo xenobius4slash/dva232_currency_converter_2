@@ -13,6 +13,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
+
 public class ConversionRatesFragment extends Fragment {
 
     public ConversionRatesFragment() {
@@ -58,7 +62,8 @@ public class ConversionRatesFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent,View view, int pos, long id) {
                 Log.d("TEST", "ListView click: " + parent.getItemAtPosition(pos).toString());
                 AlertDialog.Builder builder = new AlertDialog.Builder(parent.getContext());
-                String output = null;
+                String output = getStringFromCurrencyArrayByPosition(pos);
+                /*
                 switch( pos ) {
                     case 0: String[] currencyEUR = getResources().getStringArray(R.array.EUR);
                         output = getStringFromArray(currencyEUR);
@@ -82,6 +87,7 @@ public class ConversionRatesFragment extends Fragment {
                         output = getStringFromArray(currencyKRW);
                         break;
                 }
+                */
                 String from = getString(R.string.dialog_conversion_rates_from);
                 //String fromCurrency = parent.getItemAtPosition(pos).toString();
                 String fromCurrency = currencies[pos];
@@ -95,9 +101,18 @@ public class ConversionRatesFragment extends Fragment {
         return rootView;
     }
 
-    public String getStringFromArray(String[] array) {
-        String[] ca = getResources().getStringArray(R.array.currencies_array);
-        return ca[0]+": "+array[0]+"\n"+ca[1]+": "+array[1]+"\n"+ca[2]+": "+array[2]+"\n"+ca[3]+": "+array[3]+"\n"+ca[4]+": "+array[4]+"\n"+ca[5]+": "+array[5]+"\n"+ca[6]+": "+array[6];
+    public String getStringFromCurrencyArrayByPosition(Integer pos) {
+        String[] cas = getResources().getStringArray(R.array.currencies_array); // currency string
+        Double[][] cr = ((MainActivity) getActivity()).getCurrencyRatesAll();   // currency rates
+        return cas[0]+": "+fn(cr[pos][0])+"\n"+cas[1]+": "+fn(cr[pos][1])+"\n"+cas[2]+": "+fn(cr[pos][2])+"\n"+cas[3]+": "+fn(cr[pos][3])+"\n"+cas[4]+": "+fn(cr[pos][4])+"\n"+cas[5]+": "+fn(cr[pos][5])+"\n"+cas[6]+": "+fn(cr[pos][6]);
+    }
+
+    public String fn(Double value) {
+        NumberFormat format = NumberFormat.getCurrencyInstance();
+        DecimalFormatSymbols dfs = ((DecimalFormat) format).getDecimalFormatSymbols();
+        dfs.setCurrencySymbol("");
+        ((DecimalFormat) format).setDecimalFormatSymbols(dfs);
+        return format.format(value);
     }
 
 }
