@@ -180,9 +180,13 @@ public class MainActivity extends FragmentActivity {
         lastUpdated.setTimeInMillis(timestamp * 1000);
         Log.d("LASTUPDATED", "new last updated: " + DateFormat.format("dd-MM-yyyy HH:mm:ss", lastUpdated).toString());
 
-        TextView tv = findViewById(R.id.latestUpdate);
-        tv.setText( DateFormat.format("dd.MM.yyyy HH:mm", lastUpdated).toString() );
-
+        try {
+            TextView tv = findViewById(R.id.latestUpdate);
+            tv.setText(DateFormat.format("dd.MM.yyyy HH:mm", lastUpdated).toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+            setLatestUpdateTextView(timestamp);
+        }
     }
 
     /**
